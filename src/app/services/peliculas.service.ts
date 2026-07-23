@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 // Configuracion EndPoint API
 import { Global } from '../conf/global';
@@ -8,18 +8,18 @@ import { catchError, map, tap } from 'rxjs/operators';
 // Modelado de datos
 import { CarteleraResponse, Movie } from '../interfaces/cartelera';
 import { MovieResponse } from '../interfaces/movie';
-import { CreditsReponse, Cast } from '../interfaces/credits';
+import { Cast, CreditsReponse } from '../interfaces/credits';
 
+/**
+ * Cliente de la API de TMDB: cartelera paginada, busqueda, detalle y reparto de peliculas.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class PeliculasService {
-  private carteleraPage = 1;
-  public cargando: boolean = false;
+  public cargando = false;
 
-  constructor(private http: HttpClient) {}
-
-  get params() {
+  public get params(): { api_key: string; language: string; page: string } {
     return {
       api_key: Global.urlKey,
       language: Global.urlLgn,
@@ -27,14 +27,14 @@ export class PeliculasService {
     };
   }
 
-  resetCarteleraPage() {
+  public resetCarteleraPage(): void {
     this.carteleraPage = 1;
   }
 
   //-------------------------------------------------------------------------------------------------------//
   // Obtenemos las peliculas en cartelera                                                                  //
   //-------------------------------------------------------------------------------------------------------//
-  getCartelera(): Observable<Movie[]> {
+  public getCartelera(): Observable<Movie[]> {
     if (this.cargando) {
       // cargando peliculas
       return of([]);
@@ -56,7 +56,7 @@ export class PeliculasService {
   //-------------------------------------------------------------------------------------------------------//
   // Buscador de peliculas                                                                                 //
   //-------------------------------------------------------------------------------------------------------//
-  buscarPeliculas(texto: string): Observable<Movie[]> {
+  public buscarPeliculas(texto: string): Observable<Movie[]> {
     const params = { ...this.params, page: '1', query: texto };
     return this.http
       .get<CarteleraResponse>(`${Global.urlApi}/search/movie`, {
@@ -67,24 +67,27 @@ export class PeliculasService {
   //-------------------------------------------------------------------------------------------------------//
   //Obtenemos los datos especificos de una pelicula                                                        //
   //-------------------------------------------------------------------------------------------------------//
-  getPeliculaDetalle(id: string) {
+  public getPeliculaDetalle(id: string): Observable<MovieResponse | null> {
     return this.http
       .get<MovieResponse>(`${Global.urlApi}/movie/${id}`, {
         params: this.params,
       })
-      .pipe(catchError(err => of(null)));
+      .pipe(catchError(() => of(null)));
   }
   //-------------------------------------------------------------------------------------------------------//
   //Obtenemos los actores de la pelicula                                                                   //
   //-------------------------------------------------------------------------------------------------------//
-  getCast(id: string): Observable<Cast[]> {
+  public getCast(id: string): Observable<Cast[]> {
     return this.http
       .get<CreditsReponse>(`${Global.urlApi}/movie/${id}/credits`, {
         params: this.params,
       })
       .pipe(
         map(resp => resp.cast),
-        catchError(err => of([]))
+        catchError(() => of([]))
       );
   }
+
+  private http = inject(HttpClient);
+  private carteleraPage = 1;
 }

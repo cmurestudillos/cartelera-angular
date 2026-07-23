@@ -1,0 +1,5 @@
+<span class="star-rating" [attr.aria-label]="value + ' de ' + totalStars">
+  @for (star of stars; track star) {
+    <i class="fa-star" [class.fas]="star <= value" [class.far]="star > value"></i>
+  }
+</span>

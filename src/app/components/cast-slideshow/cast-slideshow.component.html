@@ -1,9 +1,11 @@
-<div class="swiper-container">
+<div class="swiper">
   <h1>Reparto</h1>
   <hr />
   <div class="swiper-wrapper">
-    <div *ngFor="let actor of cast" class="swiper-slide text-white text-center">
-      <img [src]="actor.profile_path | poster" [alt]="actor.name" class="img-thumbnail" /> {{ actor.name }}
-    </div>
+    @for (actor of cast; track actor) {
+      <div class="swiper-slide text-white text-center">
+        <img [src]="actor.profile_path | poster" [alt]="actor.name" class="img-thumbnail" /> {{ actor.name }}
+      </div>
+    }
   </div>
 </div>

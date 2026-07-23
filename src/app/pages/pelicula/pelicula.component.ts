@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 // rutas
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -9,24 +10,26 @@ import { MovieResponse } from '../../interfaces/movie';
 import { Cast } from '../../interfaces/credits';
 // Operadores
 import { combineLatest } from 'rxjs';
+// Componentes y pipes
+import { CastSlideshowComponent } from '../../components/cast-slideshow/cast-slideshow.component';
+import { PosterPipe } from '../../pipes/poster.pipe';
+import { StarRatingComponent } from '../../components/star-rating/star-rating.component';
 
+/**
+ * Pagina de detalle de una pelicula: sinopsis, puntuacion y reparto.
+ */
 @Component({
-  selector: 'PeliculaComponent',
+  selector: 'app-pelicula',
   templateUrl: './pelicula.component.html',
   styleUrls: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [DecimalPipe, PosterPipe, StarRatingComponent, CastSlideshowComponent],
 })
 export class PeliculaComponent implements OnInit {
-  public pelicula: MovieResponse;
+  public pelicula!: MovieResponse;
   public cast: Cast[] = [];
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private peliculasService: PeliculasService,
-    private location: Location,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const { id } = this.activatedRoute.snapshot.params;
     combineLatest([this.peliculasService.getPeliculaDetalle(id), this.peliculasService.getCast(id)]).subscribe(
       ([pelicula, cast]) => {
@@ -40,7 +43,12 @@ export class PeliculaComponent implements OnInit {
     );
   }
 
-  onRegresar() {
+  public onRegresar(): void {
     this.location.back();
   }
+
+  private activatedRoute = inject(ActivatedRoute);
+  private peliculasService = inject(PeliculasService);
+  private location = inject(Location);
+  private router = inject(Router);
 }

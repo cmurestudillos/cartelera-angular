@@ -3,4 +3,4 @@ node_modules
 /dist
 .angular
 .vercel
-package-lock.json
+.env*
