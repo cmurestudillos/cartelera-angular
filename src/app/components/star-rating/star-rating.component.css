@@ -1,0 +1,12 @@
+.star-rating {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.star-rating .fas {
+  color: yellow;
+}
+
+.star-rating .far {
+  color: grey;
+}

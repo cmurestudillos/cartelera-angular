@@ -1,36 +1,36 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { NgStyle, SlicePipe } from '@angular/common';
 // Slideshow
 import Swiper from 'swiper';
 // Modelo de datos
 import { Movie } from '../../interfaces/cartelera';
 
+/**
+ * Carrusel (Swiper) de peliculas destacadas con fondo e imagen de sinopsis.
+ */
 @Component({
-  selector: 'SlideshowComponent',
+  selector: 'app-slideshow',
   templateUrl: './slideshow.component.html',
   styleUrls: ['./slideshow.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [NgStyle, SlicePipe],
 })
-export class SlideshowComponent implements OnInit, AfterViewInit {
-  @Input() peliculas: Movie[];
+export class SlideshowComponent implements AfterViewInit {
+  @Input() public peliculas: Movie[] = [];
 
-  public mySwiper: Swiper;
+  public mySwiper!: Swiper;
 
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    this.mySwiper = new Swiper('.swiper-container', {
+  public ngAfterViewInit(): void {
+    this.mySwiper = new Swiper('.swiper', {
       loop: true,
     });
   }
 
-  ngOnInit(): void {
-    // console.log(this.peliculas);
-  }
-
-  onSlideNext() {
+  public onSlideNext(): void {
     this.mySwiper.slideNext();
   }
 
-  onSlidePrev() {
+  public onSlidePrev(): void {
     this.mySwiper.slidePrev();
   }
 }

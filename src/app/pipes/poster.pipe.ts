@@ -1,10 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'poster',
-})
+/**
+ * Convierte un `poster_path`/`profile_path` de TMDB en una URL absoluta de imagen,
+ * o devuelve un placeholder local cuando no hay imagen disponible.
+ */
+@Pipe({ name: 'poster' })
 export class PosterPipe implements PipeTransform {
-  transform(poster: string): string {
+  public transform(poster: string | null): string {
     if (poster) {
       return `https://image.tmdb.org/t/p/w500${poster}`;
     } else {

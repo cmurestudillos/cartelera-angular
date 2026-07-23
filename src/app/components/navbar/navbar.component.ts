@@ -1,28 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 // Version de la aplicacion
 import packageInfo from '../../../../package.json';
 
+/**
+ * Barra de navegacion superior: logo, popover de info y buscador de peliculas.
+ */
 @Component({
-  selector: 'NavbarComponent',
+  selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterLink],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   // Version de la aplicacion
   public appVersion: string = packageInfo.version;
 
-  constructor(private router: Router) {}
-
-  ngOnInit(): void {}
   //-------------------------------------------------------------------------------------------------------//
   // buscarPelicula todas las peliculas relacionadas con el string introducido                             //
   //-------------------------------------------------------------------------------------------------------//
-  buscarPelicula(texto: string) {
+  public buscarPelicula(texto: string): void {
     texto = texto.trim();
     if (texto.length === 0) {
       return;
     }
     this.router.navigate(['/buscar', texto]);
   }
+
+  private router = inject(Router);
 }
